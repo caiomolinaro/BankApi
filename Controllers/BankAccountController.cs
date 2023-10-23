@@ -49,18 +49,31 @@ namespace BankApi.Controllers
         {
             try
             {
-                if (_dbContext.BankAccount.Any(b => b.EmailClient == bankAccount.EmailClient
-                    || b.DocumentClient == bankAccount.DocumentClient
-                    || b.PhoneClient == bankAccount.PhoneClient))
+                if(_dbContext.BankAccount.Any(b => b.EmailClient == bankAccount.EmailClient) )
                 {
                     ModelState.AddModelError("EmailClient", "Esse email já está em uso.");
-                    ModelState.AddModelError("DocumentClient", "Esse documento já está em uso.");
-                    ModelState.AddModelError("PhoneClient", "Esse número de telefone já está em uso.");
-                    return BadRequest(ModelState);
                 }
 
-                _dbContext.BankAccount.Add(bankAccount);
-                _dbContext.SaveChanges();
+                if(_dbContext.BankAccount.Any(b => b.DocumentClient == bankAccount.DocumentClient))
+                {
+                    ModelState.AddModelError("DocumentClient", "Esse documento já está em uso.");
+                }
+
+                if(_dbContext.BankAccount.Any(b => b.PhoneClient == bankAccount.PhoneClient))
+                {
+                    ModelState.AddModelError("PhoneClient", "Esse número de telefone já está em uso.");
+                }
+
+                if(ModelState.IsValid)
+                {
+                    _dbContext.BankAccount.Add(bankAccount);
+                    _dbContext.SaveChanges();
+                }
+
+                else
+                {
+                    return BadRequest(ModelState);
+                }
 
                 return new CreatedAtRouteResult(new { id = bankAccount.AccountId }, "Conta criada com sucesso");
             }

@@ -21,7 +21,6 @@ public class BankAccountModel
     public bool PhisicalPersonAccount { get; set; }
 
     [Required]
-    [Display(Name = "Pessoa fisica")]
     public bool JuridicPersonAccount { get; set; }
 
     [Required]
